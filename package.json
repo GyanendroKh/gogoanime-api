@@ -1,0 +1,9 @@
+{
+  "name": "gogoanime-api",
+  "version": "1.0.0",
+  "description": "GoGoAnime Scrapper API.",
+  "main": "index.js",
+  "repository": "https://github.com/GyanendroKh/gogoanime-api",
+  "author": "GyanendroKh",
+  "license": "MIT"
+}

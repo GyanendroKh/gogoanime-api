@@ -5,6 +5,7 @@ export type UrlParamsType = {
 export type GoGoAnimeConfig = {
   baseUrl: string;
   recentReleaseUrl: string;
+  popularOngoingUpdateUrl: string;
 };
 
 export type IPagination<T = unknown> = {
@@ -13,10 +14,24 @@ export type IPagination<T = unknown> = {
   data: Array<T>;
 };
 
+export type IGenre = {
+  id: string;
+  title: string;
+  link: string;
+};
+
 export type IRecentRelease = {
   id: string;
   name: string;
   link: string;
   thumnail: string;
   episode: string;
+};
+
+export type IPopularOngoingUpdate = {
+  id: string;
+  name: string;
+  link: string;
+  thumnail: string;
+  genres: Array<IGenre>;
 };

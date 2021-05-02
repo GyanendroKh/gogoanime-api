@@ -35,3 +35,15 @@ export type IPopularOngoingUpdate = {
   thumnail: string;
   genres: Array<IGenre>;
 };
+
+export type IRecentlyAdded = {
+  id: string;
+  title: string;
+  link: string;
+};
+
+export type IOnGoingSeries = {
+  id: string;
+  title: string;
+  link: string;
+};

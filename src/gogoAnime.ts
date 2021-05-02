@@ -4,8 +4,10 @@ import { DEFAULT_CONFIG } from './constants';
 import {
   GoGoAnimeConfig,
   IGenre,
+  IOnGoingSeries,
   IPagination,
   IPopularOngoingUpdate,
+  IRecentlyAdded,
   IRecentRelease,
   UrlParamsType
 } from './types';
@@ -154,6 +156,80 @@ class GoGoAnime {
       paginations,
       data: series
     };
+  }
+
+  async getRecentlyAdded(
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<Array<IRecentlyAdded>> {
+    const res = await axios.get(this.baseUrl, axiosConfig);
+    const $ = cheerioLoad(res.data);
+
+    const series = new Array<IRecentlyAdded>();
+
+    $('div.added_series_body.final ul.listing li').each((_, ele) => {
+      const a = $(ele).children('a');
+
+      const href = a.attr('href') ?? '';
+      const title = a.attr('title') ?? '';
+
+      const id = getIdFromPath(href);
+      const link = new URL(href, this.baseUrl).toString();
+
+      series.push({ id, title, link });
+    });
+
+    return series;
+  }
+
+  async getOnGoingSeries(
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<Array<IOnGoingSeries>> {
+    const res = await axios.get(this.baseUrl, axiosConfig);
+    const $ = cheerioLoad(res.data);
+
+    const series = new Array<IOnGoingSeries>();
+
+    const ongoingDiv = $(
+      'section.content_right div.main_body div.anime_name.ongoing'
+    );
+
+    ongoingDiv
+      .next()
+      .find('nav.menu_series.cron ul li')
+      .each((_, ele) => {
+        const a = $(ele).children('a');
+
+        const href = a.attr('href') ?? '';
+        const title = a.attr('title') ?? '';
+
+        const id = getIdFromPath(href);
+        const link = new URL(href, this.baseUrl).toString();
+
+        series.push({ id, title, link });
+      });
+
+    return series;
+  }
+
+  async getGenres(axiosConfig?: AxiosRequestConfig): Promise<Array<IGenre>> {
+    const res = await axios.get(this.baseUrl, axiosConfig);
+    const $ = cheerioLoad(res.data);
+
+    const genres = new Array<IGenre>();
+
+    $('nav.menu_series.genre ul li').each((_, ele) => {
+      const a = $(ele).children('a');
+
+      const href = a.attr('href') ?? '';
+      const title = a.attr('title') ?? '';
+
+      const id = getIdFromPath(href);
+      const link = new URL(href, this.baseUrl).toString();
+
+      genres.push({ id, title, link });
+    });
+
+    return genres;
   }
 
   getUrlWithBase(path: string, params?: UrlParamsType) {

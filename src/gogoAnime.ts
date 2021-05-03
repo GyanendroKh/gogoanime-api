@@ -4,6 +4,7 @@ import { DEFAULT_CONFIG } from './constants';
 import {
   GoGoAnimeConfig,
   IAnime,
+  IEntity,
   IEntityBasic,
   IGenre,
   IOnGoingSeries,
@@ -298,6 +299,43 @@ class GoGoAnime {
       });
 
       animes.push(info);
+    });
+
+    return {
+      page: page ?? 1,
+      paginations,
+      data: animes
+    };
+  }
+
+  async newSeason(
+    page?: number,
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<IPagination<IEntity>> {
+    const res = await axios.get(
+      this.getUrlWithBase('/new-season.html', { page: String(page) }),
+      axiosConfig
+    );
+    const $ = cheerioLoad(res.data);
+
+    const paginations = new Array<number>();
+    const animes = new Array<IEntity>();
+
+    $('div.anime_name_pagination div.pagination ul.pagination-list li').each(
+      (_, ele) => {
+        const a = $(ele).children('a');
+
+        const number = a.data('page');
+
+        paginations.push(number);
+      }
+    );
+
+    $('div.last_episodes ul.items li').each((_, ele) => {
+      const a = $(ele).find('p.name a');
+      const thumbnail = $(ele).find('div.img a img').attr('src') ?? '';
+
+      animes.push({ ...this._getEntityFromA(a), thumbnail });
     });
 
     return {

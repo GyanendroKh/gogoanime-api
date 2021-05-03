@@ -1,8 +1,9 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { load as cheerioLoad } from 'cheerio';
+import { Cheerio, load as cheerioLoad } from 'cheerio';
 import { DEFAULT_CONFIG } from './constants';
 import {
   GoGoAnimeConfig,
+  IEntityBasic,
   IGenre,
   IOnGoingSeries,
   IPagination,
@@ -62,20 +63,13 @@ class GoGoAnime {
 
     $('div.last_episodes.loaddub ul.items li').each((_, ele) => {
       const a = $(ele).find('p.name a');
-      const href = a.attr('href') ?? '';
-      const name = a.attr('title') ?? '';
 
-      const thumnail = $(ele).find('div.img a img').attr('src') ?? '';
+      const thumbnail = $(ele).find('div.img a img').attr('src') ?? '';
       const episode = $(ele).find('p.episode').text().trim();
 
-      const id = getIdFromPath(href);
-      const link = new URL(href, this.baseUrl).toString();
-
       series.push({
-        id,
-        name,
-        link,
-        thumnail,
+        ...this._getEntityFromA(a),
+        thumbnail,
         episode
       });
     });
@@ -113,7 +107,7 @@ class GoGoAnime {
 
     $('div.added_series_body.popular ul li').each((_, ele) => {
       const style = $(ele).find('a div.thumbnail-popular').attr('style') ?? '';
-      const thumnail = (() => {
+      const thumbnail = (() => {
         const match = style.match(/url\('(?<url>.+)'\);/);
 
         if (match && match.groups) {
@@ -128,27 +122,16 @@ class GoGoAnime {
       })();
 
       const a = $(ele).children('a');
-      const href = a.attr('href') ?? '';
-      const name = a.attr('title') ?? '';
-
-      const id = getIdFromPath(href);
-      const link = new URL(href, this.baseUrl).toString();
 
       const genres = new Array<IGenre>();
 
       $(ele)
         .find('p.genres a')
         .each((_, _ele) => {
-          const _href = $(_ele).attr('href') ?? '';
-          const _title = $(_ele).attr('title') ?? '';
-
-          const _id = getIdFromPath(_href);
-          const _link = new URL(_href, this.baseUrl).toString();
-
-          genres.push({ id: _id, title: _title, link: _link });
+          genres.push(this._getEntityFromA($(_ele)));
         });
 
-      series.push({ id, name, link, thumnail, genres });
+      series.push({ ...this._getEntityFromA(a), thumbnail, genres });
     });
 
     return {
@@ -169,13 +152,7 @@ class GoGoAnime {
     $('div.added_series_body.final ul.listing li').each((_, ele) => {
       const a = $(ele).children('a');
 
-      const href = a.attr('href') ?? '';
-      const title = a.attr('title') ?? '';
-
-      const id = getIdFromPath(href);
-      const link = new URL(href, this.baseUrl).toString();
-
-      series.push({ id, title, link });
+      series.push(this._getEntityFromA(a));
     });
 
     return series;
@@ -199,13 +176,7 @@ class GoGoAnime {
       .each((_, ele) => {
         const a = $(ele).children('a');
 
-        const href = a.attr('href') ?? '';
-        const title = a.attr('title') ?? '';
-
-        const id = getIdFromPath(href);
-        const link = new URL(href, this.baseUrl).toString();
-
-        series.push({ id, title, link });
+        series.push(this._getEntityFromA(a));
       });
 
     return series;
@@ -220,13 +191,7 @@ class GoGoAnime {
     $('nav.menu_series.genre ul li').each((_, ele) => {
       const a = $(ele).children('a');
 
-      const href = a.attr('href') ?? '';
-      const title = a.attr('title') ?? '';
-
-      const id = getIdFromPath(href);
-      const link = new URL(href, this.baseUrl).toString();
-
-      genres.push({ id, title, link });
+      genres.push(this._getEntityFromA(a));
     });
 
     return genres;
@@ -246,6 +211,20 @@ class GoGoAnime {
 
   getBaseUrl() {
     return this.baseUrl;
+  }
+
+  protected _getEntityFromA(a: Cheerio, baseUrl = this.baseUrl): IEntityBasic {
+    const href = a.attr('href') ?? '';
+    const title = a.attr('title') ?? '';
+
+    const id = getIdFromPath(href);
+    const link = new URL(href, baseUrl).toString();
+
+    return {
+      id,
+      title,
+      link
+    };
   }
 }
 

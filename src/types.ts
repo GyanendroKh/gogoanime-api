@@ -14,36 +14,26 @@ export type IPagination<T = unknown> = {
   data: Array<T>;
 };
 
-export type IGenre = {
+export type IEntityBasic = {
   id: string;
   title: string;
   link: string;
 };
 
-export type IRecentRelease = {
-  id: string;
-  name: string;
-  link: string;
-  thumnail: string;
+export type IEntity = IEntityBasic & {
+  thumbnail: string;
+};
+
+export type IGenre = IEntityBasic;
+
+export type IRecentRelease = IEntity & {
   episode: string;
 };
 
-export type IPopularOngoingUpdate = {
-  id: string;
-  name: string;
-  link: string;
-  thumnail: string;
+export type IPopularOngoingUpdate = IEntity & {
   genres: Array<IGenre>;
 };
 
-export type IRecentlyAdded = {
-  id: string;
-  title: string;
-  link: string;
-};
+export type IRecentlyAdded = IEntityBasic;
 
-export type IOnGoingSeries = {
-  id: string;
-  title: string;
-  link: string;
-};
+export type IOnGoingSeries = IEntityBasic;

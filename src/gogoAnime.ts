@@ -3,6 +3,7 @@ import { Cheerio, load as cheerioLoad } from 'cheerio';
 import { DEFAULT_CONFIG } from './constants';
 import {
   GoGoAnimeConfig,
+  IAnime,
   IEntityBasic,
   IGenre,
   IOnGoingSeries,
@@ -195,6 +196,115 @@ class GoGoAnime {
     });
 
     return genres;
+  }
+
+  async animeListSearchLetters(
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<Array<IEntityBasic>> {
+    const res = await axios.get(
+      this.getUrlWithBase('/anime-list.html'),
+      axiosConfig
+    );
+    const $ = cheerioLoad(res.data);
+
+    const letters = new Array<IEntityBasic>();
+
+    $('div.main_body div.list_search ul li.first-char').each((_, ele) => {
+      const a = $(ele).children('a');
+
+      const title = a.text().trim();
+
+      letters.push({ ...this._getEntityFromA(a), title });
+    });
+
+    return letters;
+  }
+
+  async animeList(
+    page?: number,
+    letter?: string,
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<IPagination<IAnime>> {
+    const path = letter ?? '/anime-list.html';
+
+    const res = await axios.get(
+      this.getUrlWithBase(path, { page: String(page) }),
+      axiosConfig
+    );
+    const $ = cheerioLoad(res.data);
+
+    const paginations = new Array<number>();
+    const animes = new Array<IAnime>();
+
+    $('.pagination ul.pagination-list li').each((_, ele) => {
+      const e = $(ele).children('a');
+
+      const dataPage = e.attr('data-page');
+      paginations.push(Number(dataPage));
+    });
+
+    $('div.main_body div.anime_list_body ul.listing li').each((_, ele) => {
+      const a = $(ele).children('a');
+      const { id, link } = this._getEntityFromA(a);
+
+      const $info = cheerioLoad($(ele).attr('title'));
+
+      const thumbnail = $info('div.thumnail_tool img').attr('src') ?? '';
+      const infoDiv = $info('div.thumnail_tool').next();
+
+      const title = infoDiv.children('a').text().trim();
+
+      const info: IAnime = {
+        id,
+        title,
+        link,
+        thumbnail,
+        genres: []
+      };
+
+      infoDiv.children('p').each((_, _ele) => {
+        const p = $(_ele);
+        const type = p
+          .children('span')
+          .text()
+          .replace(':', '')
+          .trim()
+          .toLowerCase();
+
+        const text = p.text().slice(`${type}:`.length).trim();
+
+        if (type === 'genre') {
+          p.children('a').each((_, _e) => {
+            info.genres.push(this._getEntityFromA($(_e)));
+          });
+
+          return;
+        }
+
+        if (type === 'released') {
+          info.released = text;
+          return;
+        }
+
+        if (type === 'status') {
+          info.status = text;
+          return;
+        }
+
+        if (type === 'plot summary') {
+          info.summary = text;
+          return;
+        }
+      });
+
+      animes.push(info);
+    });
+
+    return {
+      page: page ?? 1,
+      paginations,
+      data: animes
+    };
   }
 
   getUrlWithBase(path: string, params?: UrlParamsType) {

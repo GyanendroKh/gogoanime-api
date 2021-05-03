@@ -26,6 +26,13 @@ export type IEntity = IEntityBasic & {
 
 export type IGenre = IEntityBasic;
 
+export type IAnime = IEntity & {
+  genres: Array<IGenre>;
+  released?: string;
+  status?: string;
+  summary?: string;
+};
+
 export type IRecentRelease = IEntity & {
   episode: string;
 };

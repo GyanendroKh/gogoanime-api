@@ -342,6 +342,79 @@ class GoGoAnime {
     };
   }
 
+  async moviesSearchLetters(
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<Array<IEntityBasic>> {
+    const path = '/anime-movies.html';
+    const res = await axios.get(this.getUrlWithBase(path), axiosConfig);
+    const $ = cheerioLoad(res.data);
+
+    const letters = new Array<IEntityBasic>();
+
+    $('div.main_body div.list_search ul li.first-char').each((_, ele) => {
+      const a = $(ele).children('a');
+
+      const title = a.text().trim();
+      const id = (() => {
+        if (title.toLowerCase() === 'all') {
+          return '';
+        }
+
+        if (title === '#') {
+          return '0';
+        }
+
+        return title;
+      })();
+      const link = this.getUrlWithBase(path, { aph: id });
+
+      letters.push({ id, title, link });
+    });
+
+    return letters;
+  }
+
+  async movies(
+    page?: number,
+    letter?: string,
+    axiosConfig?: AxiosRequestConfig
+  ) {
+    const res = await axios.get(
+      this.getUrlWithBase('/anime-movies.html', {
+        page: page,
+        aph: letter
+      }),
+      axiosConfig
+    );
+    const $ = cheerioLoad(res.data);
+
+    const paginations = new Array<number>();
+    const animes = new Array<IEntity>();
+
+    $('div.anime_name_pagination div.pagination ul.pagination-list li').each(
+      (_, ele) => {
+        const a = $(ele).children('a');
+
+        const number = a.data('page');
+
+        paginations.push(number);
+      }
+    );
+
+    $('div.last_episodes ul.items li').each((_, ele) => {
+      const a = $(ele).find('p.name a');
+      const thumbnail = $(ele).find('div.img a img').attr('src') ?? '';
+
+      animes.push({ ...this._getEntityFromA(a), thumbnail });
+    });
+
+    return {
+      page: page ?? 1,
+      paginations,
+      data: animes
+    };
+  }
+
   getUrlWithBase(path: string, params?: IUrlParamsType) {
     const url = new URL(path, this.baseUrl);
 

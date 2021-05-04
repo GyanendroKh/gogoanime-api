@@ -15,18 +15,16 @@ import { getIdFromPath } from './utils';
 
 class GoGoAnime {
   private readonly baseUrl: string;
-  private readonly recentReleaseUrl: string;
-  private readonly popularOnGoingUrl: string;
+  private readonly apiBaseUrl: string;
 
   constructor(config?: IGoGoAnimeConfig) {
-    const { baseUrl, recentReleaseUrl, popularOngoingUpdateUrl } = {
+    const { baseUrl, apiBaseUrl } = {
       ...DEFAULT_CONFIG,
       ...config
     };
 
     this.baseUrl = baseUrl;
-    this.recentReleaseUrl = recentReleaseUrl;
-    this.popularOnGoingUrl = popularOngoingUpdateUrl;
+    this.apiBaseUrl = apiBaseUrl;
   }
 
   async recentRelease(
@@ -34,17 +32,10 @@ class GoGoAnime {
     type?: number,
     axiosConfig?: AxiosRequestConfig
   ): Promise<IPagination<IRecentRelease>> {
-    const url = new URL(this.recentReleaseUrl);
-
-    if (page) {
-      url.searchParams.set('page', String(page));
-    }
-
-    if (type) {
-      url.searchParams.set('type', String(type));
-    }
-
-    const res = await axios.get(url.toString(), axiosConfig);
+    const res = await axios.get(
+      this.getUrlWithApi('/ajax/page-recent-release.html', { page, type }),
+      axiosConfig
+    );
     const $ = cheerioLoad(res.data);
 
     const paginations = new Array<number>();
@@ -84,13 +75,10 @@ class GoGoAnime {
     page?: number,
     axiosConfig?: AxiosRequestConfig
   ): Promise<IPagination<IPopularOngoingUpdate>> {
-    const url = new URL(this.popularOnGoingUrl);
-
-    if (page) {
-      url.searchParams.set('page', String(page));
-    }
-
-    const res = await axios.get(url.toString(), axiosConfig);
+    const res = await axios.get(
+      this.getUrlWithApi('/ajax/page-recent-release-ongoing.html', { page }),
+      axiosConfig
+    );
     const $ = cheerioLoad(res.data);
 
     const paginations = new Array<number>();
@@ -424,11 +412,8 @@ class GoGoAnime {
     keyword: string,
     axiosConfig?: AxiosRequestConfig
   ): Promise<Array<IEntity>> {
-    const url = new URL('https://ajax.gogo-load.com/site/loadAjaxSearch');
-    url.searchParams.set('keyword', keyword);
-
     const res = await axios.get<{ content: string }>(
-      url.toString(),
+      this.getUrlWithApi('/site/loadAjaxSearch', { keyword }),
       axiosConfig
     );
     const content = res.data.content.replace(/\\/g, '');
@@ -467,7 +452,15 @@ class GoGoAnime {
   }
 
   getUrlWithBase(path: string, params?: IUrlParamsType) {
-    const url = new URL(path, this.baseUrl);
+    return this.getUrl(this.baseUrl, path, params);
+  }
+
+  getUrlWithApi(path: string, params?: IUrlParamsType): string {
+    return this.getUrl(this.apiBaseUrl, path, params);
+  }
+
+  getUrl(base: string, path: string, params?: IUrlParamsType): string {
+    const url = new URL(path, base);
 
     if (params) {
       Object.entries(params).forEach(([key, value]) => {

@@ -2,9 +2,7 @@ import { IGoGoAnimeConfig } from './types';
 
 export const DEFAULT_CONFIG: IGoGoAnimeConfig = {
   baseUrl: 'https://gogoanime.ai',
-  recentReleaseUrl: 'https://ajax.gogo-load.com/ajax/page-recent-release.html',
-  popularOngoingUpdateUrl:
-    'https://ajax.gogo-load.com/ajax/page-recent-release-ongoing.html'
+  apiBaseUrl: 'https://ajax.gogo-load.com'
 };
 
 export const RECENT_RELEASE_TYPE_SUB = 1;

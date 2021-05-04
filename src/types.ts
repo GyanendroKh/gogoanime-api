@@ -4,8 +4,7 @@ export type IUrlParamsType = {
 
 export type IGoGoAnimeConfig = {
   baseUrl: string;
-  recentReleaseUrl: string;
-  popularOngoingUpdateUrl: string;
+  apiBaseUrl: string;
 };
 
 export type IPagination<T = unknown> = {

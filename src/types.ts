@@ -23,6 +23,11 @@ export type IEntity = IEntityBasic & {
   thumbnail: string;
 };
 
+export type IEpisodePage = {
+  start: number;
+  end: number;
+};
+
 export type IAnimeBasic = IEntity & {
   genres: Array<IEntityBasic>;
   released?: string;
@@ -35,7 +40,18 @@ export type IAnime = IAnimeBasic & {
   type?: string;
   otherNames?: Array<string>;
   episodeCount: number;
-  episodePages: Array<{ start: number; end: number }>;
+  episodePages: Array<IEpisodePage>;
+};
+
+export type IAnimeEpisodeInfo = {
+  id: string;
+  link: string;
+  anime: IEntityBasic;
+  movieId: string;
+  videoId: string;
+  episode: number;
+  episodeCount: number;
+  episodePages: Array<IEpisodePage>;
 };
 
 export type IRecentRelease = IEntity & {

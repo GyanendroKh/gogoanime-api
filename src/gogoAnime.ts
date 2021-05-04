@@ -10,7 +10,9 @@ import {
   IPopularOngoingUpdate,
   IRecentRelease,
   IUrlParamsType,
-  IAnime
+  IAnime,
+  IAnimeEpisodeInfo,
+  IEpisodePage
 } from './types';
 import { getIdFromPath } from './utils';
 
@@ -573,6 +575,65 @@ class GoGoAnime {
     });
 
     return episodes;
+  }
+
+  async animeEpisodeInfo(
+    id: string,
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<IAnimeEpisodeInfo> {
+    const link = this.getUrlWithBase(`/${id}`);
+    const res = await axios.get(link, axiosConfig);
+    const $ = cheerioLoad(res.data);
+
+    const anime = this._getEntityFromA(
+      $('div.anime_video_body div.anime_video_body_cate div.anime-info a')
+    );
+    const movieId =
+      $('input[type="hidden"]#movie_id.movie_id').attr('value') ?? '';
+    const episode = Number(
+      $('input[type="hidden"]#default_ep.default_ep').attr('value') ?? '-1'
+    );
+
+    const src = $('.play-video iframe').attr('src') ?? '';
+
+    const videoId = (() => {
+      const matches = src.match(/id=(?<id>\w+)/);
+
+      if (matches && matches.groups) {
+        return matches.groups['id'];
+      }
+
+      return '';
+    })();
+
+    const episodePages = new Array<IEpisodePage>();
+    let episodeCount = 0;
+
+    $('.anime_video_body ul#episode_page li').each((_, ele) => {
+      const a = $(ele).children('a');
+
+      const start = Number(a.attr('ep_start'));
+      const end = Number(a.attr('ep_end'));
+
+      episodePages.push({ start, end });
+    });
+
+    episodePages.forEach(d => {
+      if (d.end > episodeCount) {
+        episodeCount = d.end;
+      }
+    });
+
+    return {
+      id,
+      link,
+      anime,
+      movieId,
+      videoId,
+      episode,
+      episodeCount,
+      episodePages
+    };
   }
 
   getUrlWithBase(path: string, params?: IUrlParamsType) {

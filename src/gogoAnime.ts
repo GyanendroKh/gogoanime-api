@@ -12,7 +12,8 @@ import {
   IUrlParamsType,
   IAnime,
   IAnimeEpisodeInfo,
-  IEpisodePage
+  IEpisodePage,
+  IVideoRes
 } from './types';
 import { getIdFromPath } from './utils';
 
@@ -634,6 +635,27 @@ class GoGoAnime {
       episodeCount,
       episodePages
     };
+  }
+
+  async animeEpisodeVideo(
+    videoId: string,
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<IVideoRes> {
+    const link = this.getUrl('https://gogo-play.net', '/ajax.php', {
+      id: videoId,
+      refer: this.baseUrl
+    });
+    const res = await axios.get<IVideoRes>(link, {
+      ...axiosConfig,
+      headers: {
+        ...axiosConfig?.headers,
+        referer: `https://gogo-play.net/streaming.php?id=${videoId}`,
+        'user-agent':
+          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36'
+      }
+    });
+
+    return res.data;
   }
 
   getUrlWithBase(path: string, params?: IUrlParamsType) {

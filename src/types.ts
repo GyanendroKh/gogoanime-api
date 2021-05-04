@@ -61,3 +61,17 @@ export type IRecentRelease = IEntity & {
 export type IPopularOngoingUpdate = IEntity & {
   genres: Array<IEntityBasic>;
 };
+
+export type IVideoSource = {
+  file: string;
+  label: string;
+  type: string;
+};
+
+export type IVideoRes = {
+  source: Array<IVideoSource>;
+  source_bk: Array<IVideoSource>;
+  track: {
+    tracks: Array<{ file: string; kind: string }>;
+  };
+};

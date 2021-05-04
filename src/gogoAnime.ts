@@ -226,7 +226,7 @@ class GoGoAnime {
     const path = letter ?? '/anime-list.html';
 
     const res = await axios.get(
-      this.getUrlWithBase(path, { page: String(page) }),
+      this.getUrlWithBase(path, { page }),
       axiosConfig
     );
     const $ = cheerioLoad(res.data);
@@ -310,7 +310,7 @@ class GoGoAnime {
     axiosConfig?: AxiosRequestConfig
   ): Promise<IPagination<IEntity>> {
     const res = await axios.get(
-      this.getUrlWithBase('/new-season.html', { page: String(page) }),
+      this.getUrlWithBase('/new-season.html', { page }),
       axiosConfig
     );
     const $ = cheerioLoad(res.data);
@@ -347,7 +347,9 @@ class GoGoAnime {
 
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        url.searchParams.set(key, value);
+        if (value !== undefined) {
+          url.searchParams.set(key, String(value));
+        }
       });
     }
 

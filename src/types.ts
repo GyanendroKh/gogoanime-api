@@ -1,5 +1,5 @@
 export type IUrlParamsType = {
-  [key: string]: string;
+  [key: string]: string | number | undefined;
 };
 
 export type IGoGoAnimeConfig = {

@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { Cheerio, load as cheerioLoad } from 'cheerio';
+import { Cheerio, load as cheerioLoad, Root } from 'cheerio';
 import { DEFAULT_CONFIG } from './constants';
 import {
   IGoGoAnimeConfig,
@@ -315,30 +315,12 @@ class GoGoAnime {
     );
     const $ = cheerioLoad(res.data);
 
-    const paginations = new Array<number>();
-    const animes = new Array<IEntity>();
-
-    $('div.anime_name_pagination div.pagination ul.pagination-list li').each(
-      (_, ele) => {
-        const a = $(ele).children('a');
-
-        const number = a.data('page');
-
-        paginations.push(number);
-      }
-    );
-
-    $('div.last_episodes ul.items li').each((_, ele) => {
-      const a = $(ele).find('p.name a');
-      const thumbnail = $(ele).find('div.img a img').attr('src') ?? '';
-
-      animes.push({ ...this._getEntityFromA(a), thumbnail });
-    });
+    const { data, paginations } = this._getPaginatedAnimeList($);
 
     return {
       page: page ?? 1,
       paginations,
-      data: animes
+      data
     };
   }
 
@@ -378,7 +360,7 @@ class GoGoAnime {
     page?: number,
     letter?: string,
     axiosConfig?: AxiosRequestConfig
-  ) {
+  ): Promise<IPagination<IEntity>> {
     const res = await axios.get(
       this.getUrlWithBase('/anime-movies.html', {
         page: page,
@@ -388,34 +370,19 @@ class GoGoAnime {
     );
     const $ = cheerioLoad(res.data);
 
-    const paginations = new Array<number>();
-    const animes = new Array<IEntity>();
-
-    $('div.anime_name_pagination div.pagination ul.pagination-list li').each(
-      (_, ele) => {
-        const a = $(ele).children('a');
-
-        const number = a.data('page');
-
-        paginations.push(number);
-      }
-    );
-
-    $('div.last_episodes ul.items li').each((_, ele) => {
-      const a = $(ele).find('p.name a');
-      const thumbnail = $(ele).find('div.img a img').attr('src') ?? '';
-
-      animes.push({ ...this._getEntityFromA(a), thumbnail });
-    });
+    const { data, paginations } = this._getPaginatedAnimeList($);
 
     return {
       page: page ?? 1,
       paginations,
-      data: animes
+      data
     };
   }
 
-  async popular(page?: number, axiosConfig?: AxiosRequestConfig) {
+  async popular(
+    page?: number,
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<IPagination<IEntity>> {
     const res = await axios.get(
       this.getUrlWithBase('/popular.html', {
         page: page
@@ -424,30 +391,12 @@ class GoGoAnime {
     );
     const $ = cheerioLoad(res.data);
 
-    const paginations = new Array<number>();
-    const animes = new Array<IEntity>();
-
-    $('div.anime_name_pagination div.pagination ul.pagination-list li').each(
-      (_, ele) => {
-        const a = $(ele).children('a');
-
-        const number = a.data('page');
-
-        paginations.push(number);
-      }
-    );
-
-    $('div.last_episodes ul.items li').each((_, ele) => {
-      const a = $(ele).find('p.name a');
-      const thumbnail = $(ele).find('div.img a img').attr('src') ?? '';
-
-      animes.push({ ...this._getEntityFromA(a), thumbnail });
-    });
+    const { paginations, data } = this._getPaginatedAnimeList($);
 
     return {
       page: page ?? 1,
       paginations,
-      data: animes
+      data
     };
   }
 
@@ -480,6 +429,33 @@ class GoGoAnime {
       id,
       title,
       link
+    };
+  }
+
+  protected _getPaginatedAnimeList($: Root) {
+    const paginations = new Array<number>();
+    const data = new Array<IEntity>();
+
+    $('div.anime_name_pagination div.pagination ul.pagination-list li').each(
+      (_, ele) => {
+        const a = $(ele).children('a');
+
+        const number = a.data('page');
+
+        paginations.push(number);
+      }
+    );
+
+    $('div.last_episodes ul.items li').each((_, ele) => {
+      const a = $(ele).find('p.name a');
+      const thumbnail = $(ele).find('div.img a img').attr('src') ?? '';
+
+      data.push({ ...this._getEntityFromA(a), thumbnail });
+    });
+
+    return {
+      data,
+      paginations
     };
   }
 }

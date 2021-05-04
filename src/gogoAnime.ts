@@ -400,6 +400,72 @@ class GoGoAnime {
     };
   }
 
+  async search(
+    keyword: string,
+    page?: number,
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<IPagination<IEntity>> {
+    const res = await axios.get(
+      this.getUrlWithBase('/search.html', { keyword, page }),
+      axiosConfig
+    );
+    const $ = cheerioLoad(res.data);
+
+    const { data, paginations } = this._getPaginatedAnimeList($);
+
+    return {
+      page: page ?? 1,
+      paginations,
+      data
+    };
+  }
+
+  async searchAjax(
+    keyword: string,
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<Array<IEntity>> {
+    const url = new URL('https://ajax.gogo-load.com/site/loadAjaxSearch');
+    url.searchParams.set('keyword', keyword);
+
+    const res = await axios.get<{ content: string }>(
+      url.toString(),
+      axiosConfig
+    );
+    const content = res.data.content.replace(/\\/g, '');
+    const $ = cheerioLoad(content);
+
+    const animes = new Array<IEntity>();
+
+    $(
+      'div#header_search_autocomplete_body div#header_search_autocomplete_item_'
+    ).each((_, ele) => {
+      const a = $(ele).children('a');
+
+      const { id, link } = this._getEntityFromA(a);
+
+      const style = a.children('div.thumbnail-recent_search').attr('style');
+      const thumbnail = (() => {
+        const match = (style ?? '').match(/url\("(?<url>.+)"\)/);
+
+        if (match && match.groups) {
+          const url = match.groups['url'];
+
+          if (url) {
+            return url;
+          }
+        }
+
+        return '';
+      })();
+
+      const title = a.text();
+
+      animes.push({ id, link, title, thumbnail });
+    });
+
+    return animes;
+  }
+
   getUrlWithBase(path: string, params?: IUrlParamsType) {
     const url = new URL(path, this.baseUrl);
 

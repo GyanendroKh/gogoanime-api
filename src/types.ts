@@ -30,6 +30,14 @@ export type IAnimeBasic = IEntity & {
   summary?: string;
 };
 
+export type IAnime = IAnimeBasic & {
+  movieId: string;
+  type?: string;
+  otherNames?: Array<string>;
+  episodeCount: number;
+  episodePages: Array<{ start: number; end: number }>;
+};
+
 export type IRecentRelease = IEntity & {
   episode: string;
 };

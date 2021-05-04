@@ -2,17 +2,14 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { Cheerio, load as cheerioLoad } from 'cheerio';
 import { DEFAULT_CONFIG } from './constants';
 import {
-  GoGoAnimeConfig,
-  IAnime,
+  IGoGoAnimeConfig,
+  IAnimeBasic,
   IEntity,
   IEntityBasic,
-  IGenre,
-  IOnGoingSeries,
   IPagination,
   IPopularOngoingUpdate,
-  IRecentlyAdded,
   IRecentRelease,
-  UrlParamsType
+  IUrlParamsType
 } from './types';
 import { getIdFromPath } from './utils';
 
@@ -21,7 +18,7 @@ class GoGoAnime {
   private readonly recentReleaseUrl: string;
   private readonly popularOnGoingUrl: string;
 
-  constructor(config?: GoGoAnimeConfig) {
+  constructor(config?: IGoGoAnimeConfig) {
     const { baseUrl, recentReleaseUrl, popularOngoingUpdateUrl } = {
       ...DEFAULT_CONFIG,
       ...config
@@ -32,7 +29,7 @@ class GoGoAnime {
     this.popularOnGoingUrl = popularOngoingUpdateUrl;
   }
 
-  async getRecentRelease(
+  async recentRelease(
     page?: number,
     type?: number,
     axiosConfig?: AxiosRequestConfig
@@ -83,7 +80,7 @@ class GoGoAnime {
     };
   }
 
-  async getPopularOnGoingSeries(
+  async popularOnGoingSeries(
     page?: number,
     axiosConfig?: AxiosRequestConfig
   ): Promise<IPagination<IPopularOngoingUpdate>> {
@@ -125,7 +122,7 @@ class GoGoAnime {
 
       const a = $(ele).children('a');
 
-      const genres = new Array<IGenre>();
+      const genres = new Array<IEntityBasic>();
 
       $(ele)
         .find('p.genres a')
@@ -143,13 +140,13 @@ class GoGoAnime {
     };
   }
 
-  async getRecentlyAdded(
+  async recentlyAdded(
     axiosConfig?: AxiosRequestConfig
-  ): Promise<Array<IRecentlyAdded>> {
+  ): Promise<Array<IEntityBasic>> {
     const res = await axios.get(this.baseUrl, axiosConfig);
     const $ = cheerioLoad(res.data);
 
-    const series = new Array<IRecentlyAdded>();
+    const series = new Array<IEntityBasic>();
 
     $('div.added_series_body.final ul.listing li').each((_, ele) => {
       const a = $(ele).children('a');
@@ -160,13 +157,13 @@ class GoGoAnime {
     return series;
   }
 
-  async getOnGoingSeries(
+  async onGoingSeries(
     axiosConfig?: AxiosRequestConfig
-  ): Promise<Array<IOnGoingSeries>> {
+  ): Promise<Array<IEntityBasic>> {
     const res = await axios.get(this.baseUrl, axiosConfig);
     const $ = cheerioLoad(res.data);
 
-    const series = new Array<IOnGoingSeries>();
+    const series = new Array<IEntityBasic>();
 
     const ongoingDiv = $(
       'section.content_right div.main_body div.anime_name.ongoing'
@@ -184,11 +181,11 @@ class GoGoAnime {
     return series;
   }
 
-  async getGenres(axiosConfig?: AxiosRequestConfig): Promise<Array<IGenre>> {
+  async genres(axiosConfig?: AxiosRequestConfig): Promise<Array<IEntityBasic>> {
     const res = await axios.get(this.baseUrl, axiosConfig);
     const $ = cheerioLoad(res.data);
 
-    const genres = new Array<IGenre>();
+    const genres = new Array<IEntityBasic>();
 
     $('nav.menu_series.genre ul li').each((_, ele) => {
       const a = $(ele).children('a');
@@ -225,7 +222,7 @@ class GoGoAnime {
     page?: number,
     letter?: string,
     axiosConfig?: AxiosRequestConfig
-  ): Promise<IPagination<IAnime>> {
+  ): Promise<IPagination<IAnimeBasic>> {
     const path = letter ?? '/anime-list.html';
 
     const res = await axios.get(
@@ -235,7 +232,7 @@ class GoGoAnime {
     const $ = cheerioLoad(res.data);
 
     const paginations = new Array<number>();
-    const animes = new Array<IAnime>();
+    const animes = new Array<IAnimeBasic>();
 
     $('.pagination ul.pagination-list li').each((_, ele) => {
       const e = $(ele).children('a');
@@ -255,7 +252,7 @@ class GoGoAnime {
 
       const title = infoDiv.children('a').text().trim();
 
-      const info: IAnime = {
+      const info: IAnimeBasic = {
         id,
         title,
         link,
@@ -345,7 +342,7 @@ class GoGoAnime {
     };
   }
 
-  getUrlWithBase(path: string, params?: UrlParamsType) {
+  getUrlWithBase(path: string, params?: IUrlParamsType) {
     const url = new URL(path, this.baseUrl);
 
     if (params) {

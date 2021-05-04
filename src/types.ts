@@ -1,8 +1,8 @@
-export type UrlParamsType = {
+export type IUrlParamsType = {
   [key: string]: string;
 };
 
-export type GoGoAnimeConfig = {
+export type IGoGoAnimeConfig = {
   baseUrl: string;
   recentReleaseUrl: string;
   popularOngoingUpdateUrl: string;
@@ -24,10 +24,8 @@ export type IEntity = IEntityBasic & {
   thumbnail: string;
 };
 
-export type IGenre = IEntityBasic;
-
-export type IAnime = IEntity & {
-  genres: Array<IGenre>;
+export type IAnimeBasic = IEntity & {
+  genres: Array<IEntityBasic>;
   released?: string;
   status?: string;
   summary?: string;
@@ -38,9 +36,5 @@ export type IRecentRelease = IEntity & {
 };
 
 export type IPopularOngoingUpdate = IEntity & {
-  genres: Array<IGenre>;
+  genres: Array<IEntityBasic>;
 };
-
-export type IRecentlyAdded = IEntityBasic;
-
-export type IOnGoingSeries = IEntityBasic;

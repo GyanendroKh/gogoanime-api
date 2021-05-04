@@ -1,6 +1,6 @@
-import { GoGoAnimeConfig } from './types';
+import { IGoGoAnimeConfig } from './types';
 
-export const DEFAULT_CONFIG: GoGoAnimeConfig = {
+export const DEFAULT_CONFIG: IGoGoAnimeConfig = {
   baseUrl: 'https://gogoanime.ai',
   recentReleaseUrl: 'https://ajax.gogo-load.com/ajax/page-recent-release.html',
   popularOngoingUpdateUrl:

@@ -545,6 +545,36 @@ class GoGoAnime {
     return info;
   }
 
+  async animeEpisodes(
+    movieId: string,
+    start: number,
+    end: number,
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<Array<IEntityBasic>> {
+    const res = await axios.get(
+      this.getUrlWithApi('/ajax/load-list-episode', {
+        id: movieId,
+        default_ep: 0,
+        ep_start: start,
+        ep_end: end
+      }),
+      axiosConfig
+    );
+    const $ = cheerioLoad(res.data);
+
+    const episodes = new Array<IEntityBasic>();
+
+    $('ul#episode_related li').each((_, ele) => {
+      const a = $(ele).children('a');
+
+      const title = a.children('.name').text().trim();
+
+      episodes.push({ ...this._getEntityFromA(a), title });
+    });
+
+    return episodes;
+  }
+
   getUrlWithBase(path: string, params?: IUrlParamsType) {
     return this.getUrl(this.baseUrl, path, params);
   }

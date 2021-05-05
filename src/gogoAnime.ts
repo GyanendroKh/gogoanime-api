@@ -17,8 +17,11 @@ import {
 } from './types';
 import { getIdFromPath } from './utils';
 
-class GoGoAnime {
+export default class GoGoAnime {
+  /** @internal */
   private readonly baseUrl: string;
+
+  /** @internal */
   private readonly apiBaseUrl: string;
 
   constructor(config?: IGoGoAnimeConfig) {
@@ -658,14 +661,17 @@ class GoGoAnime {
     return res.data;
   }
 
+  /** @ignore */
   getUrlWithBase(path: string, params?: IUrlParamsType): string {
     return this.getUrl(this.baseUrl, path, params);
   }
 
+  /** @ignore */
   getUrlWithApi(path: string, params?: IUrlParamsType): string {
     return this.getUrl(this.apiBaseUrl, path, params);
   }
 
+  /** @ignore */
   getUrl(base: string, path: string, params?: IUrlParamsType): string {
     const url = new URL(path, base);
 
@@ -680,10 +686,12 @@ class GoGoAnime {
     return url.toString();
   }
 
+  /** @ignore */
   getBaseUrl(): string {
     return this.baseUrl;
   }
 
+  /** @internal */
   protected _getEntityFromA(a: Cheerio, baseUrl = this.baseUrl): IEntityBasic {
     const href = a.attr('href') ?? '';
     const title = a.attr('title') ?? '';
@@ -698,6 +706,7 @@ class GoGoAnime {
     };
   }
 
+  /** @internal */
   protected _getPaginatedAnimeList(
     $: Root
   ): Omit<IPagination<IEntity>, 'page'> {
@@ -727,5 +736,3 @@ class GoGoAnime {
     };
   }
 }
-
-export default GoGoAnime;

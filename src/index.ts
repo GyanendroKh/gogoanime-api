@@ -1,5 +1,5 @@
 import GoGoAnime from './gogoAnime';
 
-export default GoGoAnime;
+export { GoGoAnime };
 export * from './constants';
 export * from './types';

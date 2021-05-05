@@ -1,6 +1,8 @@
 <p align="center">
   <b>GoGoAnime API</b> <br />
-  <a href="https://gogoanime.ai" target="_blank">https://gogoanime.ai</a>
+  <a href="https://gogoanime.ai" target="_blank">https://gogoanime.ai</a> <br />
+  <br />
+  <a href="https://nodei.co/npm/gogoanime-api/"><img src="https://nodei.co/npm/gogoanime-api.png?downloads=true&downloadRank=true&stars=true"></a>
 </p>
 
 # Installation

@@ -1,6 +1,6 @@
 {
   "name": "gogoanime-api",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "GoGoAnime Scrapper API.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

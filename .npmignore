@@ -1,0 +1,7 @@
+.github
+.husky
+docs
+src
+.eslintignore
+.eslintrc
+.tsconfig.json

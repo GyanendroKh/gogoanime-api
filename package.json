@@ -11,8 +11,7 @@
     "build": "tsc",
     "lint": "eslint .",
     "lint-staged": "lint-staged",
-    "docs": "typedoc src/index.ts --excludeInternal --theme node_modules/typedoc-darker-theme/bin/default/",
-    "postinstall": "husky install"
+    "docs": "typedoc src/index.ts --excludeInternal --theme node_modules/typedoc-darker-theme/bin/default/"
   },
   "lint-staged": {
     "src/**/*.{js,ts}": [

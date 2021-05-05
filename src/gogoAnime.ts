@@ -658,7 +658,7 @@ class GoGoAnime {
     return res.data;
   }
 
-  getUrlWithBase(path: string, params?: IUrlParamsType) {
+  getUrlWithBase(path: string, params?: IUrlParamsType): string {
     return this.getUrl(this.baseUrl, path, params);
   }
 
@@ -680,7 +680,7 @@ class GoGoAnime {
     return url.toString();
   }
 
-  getBaseUrl() {
+  getBaseUrl(): string {
     return this.baseUrl;
   }
 
@@ -698,7 +698,9 @@ class GoGoAnime {
     };
   }
 
-  protected _getPaginatedAnimeList($: Root) {
+  protected _getPaginatedAnimeList(
+    $: Root
+  ): Omit<IPagination<IEntity>, 'page'> {
     const paginations = new Array<number>();
     const data = new Array<IEntity>();
 
@@ -726,4 +728,4 @@ class GoGoAnime {
   }
 }
 
-export default new GoGoAnime();
+export default GoGoAnime;

@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint .",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "postinstall": "husky install"
   },
   "lint-staged": {
     "*.{js,ts}": [

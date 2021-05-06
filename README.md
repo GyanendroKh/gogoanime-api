@@ -1,5 +1,6 @@
 <p align="center">
   <b>GoGoAnime API</b> <br />
+  A Javascript library to extract data from
   <a href="https://gogoanime.ai" target="_blank">https://gogoanime.ai</a> <br />
   <br />
   <a href="https://nodei.co/npm/gogoanime-api/"><img src="https://nodei.co/npm/gogoanime-api.png?downloads=true&downloadRank=true&stars=true"></a>

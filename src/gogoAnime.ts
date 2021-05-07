@@ -102,14 +102,10 @@ export default class GoGoAnime {
     $('div.added_series_body.popular ul li').each((_, ele) => {
       const style = $(ele).find('a div.thumbnail-popular').attr('style') ?? '';
       const thumbnail = (() => {
-        const match = style.match(/url\('(?<url>.+)'\);/);
+        const match = style.match(/url\('(.+)'\);/);
 
-        if (match && match.groups) {
-          const url = match.groups['url'];
-
-          if (url) {
-            return url;
-          }
+        if (match && match[1]) {
+          return match[1];
         }
 
         return '';
@@ -437,14 +433,10 @@ export default class GoGoAnime {
 
       const style = a.children('div.thumbnail-recent_search').attr('style');
       const thumbnail = (() => {
-        const match = (style ?? '').match(/url\("(?<url>.+)"\)/);
+        const match = (style ?? '').match(/url\("(.+)"\)/);
 
-        if (match && match.groups) {
-          const url = match.groups['url'];
-
-          if (url) {
-            return url;
-          }
+        if (match && match[1]) {
+          return match[1];
         }
 
         return '';
@@ -601,10 +593,10 @@ export default class GoGoAnime {
     const src = $('.play-video iframe').attr('src') ?? '';
 
     const videoId = (() => {
-      const matches = src.match(/id=(?<id>\w+)/);
+      const matches = src.match(/id=(\w+)/);
 
-      if (matches && matches.groups) {
-        return matches.groups['id'];
+      if (matches && matches[1]) {
+        return matches[1];
       }
 
       return '';

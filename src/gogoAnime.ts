@@ -410,6 +410,25 @@ export default class GoGoAnime {
     };
   }
 
+  async completed(
+    page = 1,
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<IPagination<IEntity>> {
+    const res = await axios.get(
+      this.getUrlWithBase('/completed-anime.html', { page }),
+      axiosConfig
+    );
+    const $ = cheerioLoad(res.data);
+
+    const { paginations, data } = this._getPaginatedAnimeList($);
+
+    return {
+      page,
+      data,
+      paginations
+    };
+  }
+
   async search(
     keyword: string,
     page?: number,

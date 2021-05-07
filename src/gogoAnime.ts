@@ -429,6 +429,26 @@ export default class GoGoAnime {
     };
   }
 
+  async genreList(
+    id: string,
+    page = 1,
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<IPagination<IEntity>> {
+    const res = await axios.get(
+      this.getUrlWithBase(`/genre/${id}`, { page }),
+      axiosConfig
+    );
+    const $ = cheerioLoad(res.data);
+
+    const { paginations, data } = this._getPaginatedAnimeList($);
+
+    return {
+      page,
+      data,
+      paginations
+    };
+  }
+
   async search(
     keyword: string,
     page?: number,

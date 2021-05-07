@@ -187,6 +187,28 @@ export default class GoGoAnime {
     return genres;
   }
 
+  async seasons(
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<Array<IEntityBasic>> {
+    const res = await axios.get(this.baseUrl, axiosConfig);
+    const $ = cheerioLoad(res.data);
+
+    const seasons = new Array<IEntityBasic>();
+
+    const seasonH2 = $('div.anime_name.new_series h2:contains("Season")');
+    seasonH2
+      .parent()
+      .next()
+      .find('ul li a')
+      .each((_, ele) => {
+        const a = $(ele);
+
+        seasons.push(this._getEntityFromA(a));
+      });
+
+    return seasons;
+  }
+
   async animeListSearchLetters(
     axiosConfig?: AxiosRequestConfig
   ): Promise<Array<IEntityBasic>> {

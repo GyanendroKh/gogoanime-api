@@ -148,7 +148,7 @@ export default class GoGoAnime {
     return series;
   }
 
-  async onGoingSeries(
+  async onGoingSeriesAll(
     axiosConfig?: AxiosRequestConfig
   ): Promise<Array<IEntityBasic>> {
     const res = await axios.get(this.baseUrl, axiosConfig);
@@ -388,6 +388,25 @@ export default class GoGoAnime {
       page: page ?? 1,
       paginations,
       data
+    };
+  }
+
+  async onGoingSeries(
+    page = 1,
+    axiosConfig?: AxiosRequestConfig
+  ): Promise<IPagination<IEntity>> {
+    const res = await axios.get(
+      this.getUrlWithBase('/ongoing-anime.html', { page }),
+      axiosConfig
+    );
+    const $ = cheerioLoad(res.data);
+
+    const { paginations, data } = this._getPaginatedAnimeList($);
+
+    return {
+      page,
+      data,
+      paginations
     };
   }
 

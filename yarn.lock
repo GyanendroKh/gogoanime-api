@@ -610,11 +610,6 @@ domutils@^2.5.2, domutils@^2.6.0:
     domelementtype "^2.2.0"
     domhandler "^4.2.0"
 
-eledoc@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/eledoc/-/eledoc-0.2.1.tgz#2797e402bd572302c5cfe9e22242b89cbd65589e"
-  integrity sha512-i89qTl6D8qUTax2Lfx3IYgZB0phCGv7ws2S//vtoq2H3DKJs8A5AtsVtPd3LUn2jvsL6mGDJaOrsJyrtt2I1AQ==
-
 emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
@@ -1440,7 +1435,7 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-lunr@^2.3.8, lunr@^2.3.9:
+lunr@^2.3.9:
   version "2.3.9"
   resolved "https://registry.yarnpkg.com/lunr/-/lunr-2.3.9.tgz#18b123142832337dd6e964df1a5a7707b25d35e1"
   integrity sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==
@@ -1528,9 +1523,9 @@ npm-run-path@^4.0.0:
     path-key "^3.0.0"
 
 nth-check@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/nth-check/-/nth-check-2.0.0.tgz#1bb4f6dac70072fc313e8c9cd1417b5074c0a125"
-  integrity sha512-i4sc/Kj8htBrAiH1viZ0TgU8Y5XqCaV/FziYK6TBczxmeKm3AEFWqqF3195yKudrarqy7Zu80Ra5dobFjn9X/Q==
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/nth-check/-/nth-check-2.0.1.tgz#2efe162f5c3da06a28959fbd3db75dbeea9f0fc2"
+  integrity sha512-it1vE95zF6dTT9lBsYbxvqh0Soy4SPowchj0UBGj/V6cTPnXXtQOPUbhZ6CmGzAD/rW22LQK6E96pcdJXk4A4w==
   dependencies:
     boolbase "^1.0.0"
 
@@ -2114,13 +2109,6 @@ typedoc-default-themes@^0.12.10:
   version "0.12.10"
   resolved "https://registry.yarnpkg.com/typedoc-default-themes/-/typedoc-default-themes-0.12.10.tgz#614c4222fe642657f37693ea62cad4dafeddf843"
   integrity sha512-fIS001cAYHkyQPidWXmHuhs8usjP5XVJjWB8oZGqkTowZaz3v7g3KDZeeqE82FBrmkAnIBOY3jgy7lnPnqATbA==
-
-typedoc-theme-dark@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/typedoc-theme-dark/-/typedoc-theme-dark-0.0.5.tgz#0590b5a4d08a8b31d67e6d25d270965941eb6417"
-  integrity sha512-NCSoqZSReffwF5ANNduEoEOhNqkiFv+t8gRA7A3uKld09pSGytSiTU1PLVjaeWt4aX03egPp3V3GYDc4Ro26PQ==
-  dependencies:
-    lunr "^2.3.8"
 
 typedoc@^0.20.36:
   version "0.20.36"

@@ -82,46 +82,33 @@ export default class GoGoAnime {
     page?: number,
     axiosConfig?: AxiosRequestConfig
   ): Promise<IPagination<IPopularOngoingUpdate>> {
-    const res = await axios.get(
-      this.getUrlWithApi('/ajax/page-recent-release-ongoing.html', { page }),
-      axiosConfig
-    );
+    const url = this.getUrlWithBase(`/popular/${page ?? '1'}`);
+    const res = await axios.get(url, axiosConfig);
     const $ = cheerioLoad(res.data);
 
     const paginations = new Array<number>();
     const series = new Array<IPopularOngoingUpdate>();
 
-    $(
-      'div.anime_name_pagination div.pagination.popular ul.pagination-list li'
-    ).each((_, ele) => {
-      const a = $(ele).children('a');
+    $('div.anime_name_pagination div.pagination ul.pagination-list li').each(
+      (_, ele) => {
+        const a = $(ele).children('a');
 
-      paginations.push(Number(a.data('page')));
-    });
+        paginations.push(Number(a.data('page')));
+      }
+    );
 
-    $('div.added_series_body.popular ul li').each((_, ele) => {
-      const style = $(ele).find('a div.thumbnail-popular').attr('style') ?? '';
-      const thumbnail = (() => {
-        const match = style.match(/url\('(.+)'\);/);
+    $('div.main_body div.last_episodes ul.items li').each((_, ele) => {
+      const thumbnail = $(ele).find('div.img a img').attr('src') ?? '';
+      const title = $(ele).find('p.name a').text().trim();
+      const link = $(ele).find('p.name a').attr('href') ?? '';
 
-        if (match && match[1]) {
-          return match[1];
-        }
-
-        return '';
-      })();
-
-      const a = $(ele).children('a');
-
-      const genres = new Array<IEntityBasic>();
-
-      $(ele)
-        .find('p.genres a')
-        .each((_, _ele) => {
-          genres.push(this._getEntityFromA($(_ele)));
-        });
-
-      series.push({ ...this._getEntityFromA(a), thumbnail, genres });
+      series.push({
+        id: link.split('/')?.[2] ?? '',
+        link,
+        title,
+        thumbnail: `${url}${thumbnail}`,
+        genres: []
+      });
     });
 
     return {
